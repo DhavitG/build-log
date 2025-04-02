@@ -1,0 +1,25 @@
+### Node.js ###
+node_modules/
+npm-debug.log*
+yarn-error.log
+
+### React & Frontend ###
+build/
+dist/
+.DS_Store
+
+### Databases ###
+*.sqlite
+*.db
+
+### Logs & Temp Files ###
+logs/
+*.log
+tmp/
+*.swp
+
+### Git ###
+.gitignore
+!.gitignore
+
+CourseCart
