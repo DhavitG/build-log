@@ -23,11 +23,17 @@ function Otp() {
         onDone={() => {
           ref3.current.focus();
         }}
+        onBack={() => {
+          ref1.current.focus();
+        }}
       />
       <SubOtpBox
         reference={ref3}
         onDone={() => {
           ref4.current.focus();
+        }}
+        onBack={() => {
+          ref2.current.focus();
         }}
       />
       <SubOtpBox
@@ -35,17 +41,26 @@ function Otp() {
         onDone={() => {
           ref5.current.focus();
         }}
+        onBack={() => {
+          ref3.current.focus();
+        }}
       />
       <SubOtpBox
         reference={ref5}
         onDone={() => {
           ref6.current.focus();
         }}
+        onBack={() => {
+          ref4.current.focus();
+        }}
       />
       <SubOtpBox
         reference={ref6}
         onDone={() => {
           setDisabled(false);
+        }}
+        onBack={() => {
+          ref5.current.focus();
         }}
       />
 
@@ -54,7 +69,7 @@ function Otp() {
   );
 }
 
-function SubOtpBox({ reference, onDone }) {
+function SubOtpBox({ reference, onDone, onBack }) {
   const [inputBoxVal, setInputBoxVal] = useState("");
   return (
     <div>
@@ -62,12 +77,15 @@ function SubOtpBox({ reference, onDone }) {
         value={inputBoxVal}
         ref={reference}
         maxLength={1}
+        onKeyUp={(e) => {
+          if (e.key === "Backspace") {
+            onBack?.();
+          }
+        }}
         onChange={(e) => {
           const value = e.target.value;
 
-          if (value == "") {
-            // go back logic
-          } else if (/^\d$/.test(value)) {
+          if (/^\d$/.test(value)) {
             setInputBoxVal(value);
             onDone?.();
           } else {
