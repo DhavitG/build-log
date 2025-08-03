@@ -5,7 +5,7 @@ yarn-error.log
 
 ### React & Frontend ###
 build/
-dist/
+dist/ 
 .DS_Store
 
 ### Databases ###
