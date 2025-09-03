@@ -2,26 +2,35 @@ import { WebSocketServer, WebSocket } from "ws";
 
 const wss = new WebSocketServer({ port: 8080 });
 
-let allSockets: WebSocket[] = [];
+interface User {
+  socket: WebSocket;
+  room: string;
+}
 
-// event handler
+let allSockets: User[] = [];
+
 wss.on("connection", function (socket) {
-  allSockets.push(socket);
-  console.log("user connected #");
-  // socket.send("hello");
-  // setInterval(() => {
-  //   socket.send("The current price of btc is $" + Math.random() * 150000);
-  // }, 500);
-
-  // event handler for this particular socket, every user has a different socket just like every http request has a different req, res objects
   socket.on("message", (message) => {
-    console.log("message received: " + message.toString());
-    allSockets.forEach((el) => {
-      el.send(message.toString() + ": sent from the server");
-    });
+    const parsedMessage = JSON.parse(message as any);
+    if (parsedMessage.type === "join") {
+      allSockets.push({
+        socket,
+        room: parsedMessage.payload.roomId,
+      });
+    }
+
+    if (parsedMessage.type === "chat") {
+      const currentUserRoom = allSockets.find((x) => x.socket === socket)?.room;
+
+      for (let i = 0; i < allSockets.length; i++) {
+        if (allSockets[i]?.room === currentUserRoom) {
+          allSockets[i]?.socket.send(parsedMessage.payload.message);
+        }
+      }
+    }
   });
 
   socket.on("close", () => {
-    allSockets = allSockets.filter((x) => x !== socket);
+    allSockets = allSockets.filter((user) => user.socket !== socket);
   });
 });
