@@ -1,18 +1,27 @@
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 
 const wss = new WebSocketServer({ port: 8080 });
 
+let allSockets: WebSocket[] = [];
+
 // event handler
 wss.on("connection", function (socket) {
-  console.log("user connected");
+  allSockets.push(socket);
+  console.log("user connected #");
   // socket.send("hello");
   // setInterval(() => {
   //   socket.send("The current price of btc is $" + Math.random() * 150000);
   // }, 500);
 
-  socket.on("message", (e) => {
-    if (e.toString() === "ping") {
-      socket.send("pong");
-    }
+  // event handler for this particular socket, every user has a different socket just like every http request has a different req, res objects
+  socket.on("message", (message) => {
+    console.log("message received: " + message.toString());
+    allSockets.forEach((el) => {
+      el.send(message.toString() + ": sent from the server");
+    });
+  });
+
+  socket.on("close", () => {
+    allSockets = allSockets.filter((x) => x !== socket);
   });
 });
